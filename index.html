@@ -5,11 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>ChatCleanser Bot — Умный помощник и модерация для Telegram</title>
     <meta name="description" content="ChatCleanser — современный бот для модерации и развлечений в Telegram. Антиспам, игры, защита от токсичности и полный контроль чата.">
+    <meta name="robots" content="index, follow">
     <!-- Open Graph для соцсетей -->
     <meta property="og:title" content="ChatCleanser — Твой AI-помощник в Telegram">
     <meta property="og:description" content="Модерация, игры, защита от спама и многое другое. Присоединяйся!">
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://chatcleanser.duckdns.org">
     <!-- Google Fonts + Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -155,7 +155,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 20px 0;
             flex-wrap: wrap;
             gap: 20px;
             backdrop-filter: blur(8px);
@@ -320,7 +319,8 @@
             position: relative;
             z-index: 2;
         }
-        .domain-badge {
+        
+        .hash-badge {
             background: #111927;
             padding: 6px 14px;
             border-radius: 40px;
@@ -349,6 +349,11 @@
             50% { transform: translateY(-10px); }
             100% { transform: translateY(0px); }
         }
+
+        /* якорная навигация с отступом */
+        [id] {
+            scroll-margin-top: 90px;
+        }
     </style>
 </head>
 <body>
@@ -375,7 +380,7 @@
         <div class="hero">
             <div class="hero-content">
                 <div class="hero-badge">
-                    <i class="fas fa-heart" style="color:#f472b6;"></i> Твой AI-друг | chatcleanser.duckdns.org
+                    <i class="fas fa-heart" style="color:#f472b6;"></i> Твой AI-друг
                 </div>
                 <h1>👋 Привет, <span class="gradient-text">дружище!</span></h1>
                 <p>Я — твой новый помощник в чате. Сделаю общение удобнее, веселее и безопаснее. У меня куча крутых фишек — от забавных игр до мощных инструментов модерации.</p>
@@ -384,8 +389,9 @@
                     <a href="#commands" class="btn-outline"><i class="fas fa-terminal"></i> Все команды</a>
                 </div>
                 <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
-                    <span class="domain-badge"><i class="fas fa-link"></i> chatcleanser.duckdns.org/команды → #commands</span>
-                    <span class="domain-badge"><i class="fas fa-shield"></i> домен/модерация → #moderation</span>
+                    <span class="hash-badge"><i class="fas fa-hashtag"></i> команды → #commands</span>
+                    <span class="hash-badge"><i class="fas fa-shield"></i> модерация → #moderation</span>
+                    <span class="hash-badge"><i class="fas fa-user-cog"></i> администратор → #admin-team</span>
                 </div>
             </div>
             <div class="hero-stats floating">
@@ -467,7 +473,7 @@
             <p style="font-size: 1.5rem; font-weight: 600; margin: 10px 0;">@unitydevs1</p>
             <p style="max-width: 600px; margin: 0 auto 24px;">Создатель ChatCleanser, эксперт по безопасности и архитектор AI-модерации. Лично сопровождает интеграцию крупных сообществ и всегда на связи.</p>
             <div style="display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;"><a href="https://t.me/unitydevs1" target="_blank" class="btn-primary"><i class="fab fa-telegram"></i> Написать админу</a><a href="https://t.me/ChatCleanser_bot" target="_blank" class="btn-outline"><i class="fas fa-headset"></i> Поддержка бота</a></div>
-            <div class="domain-badge" style="margin-top: 28px; display: inline-block;"><i class="fas fa-at"></i> chatcleanser.duckdns.org/администратор → #admin-team</div>
+            <div class="hash-badge" style="margin-top: 28px; display: inline-block;"><i class="fas fa-hashtag"></i> администратор → #admin-team</div>
         </div>
     </div>
 
@@ -482,8 +488,8 @@
 </main>
 
 <footer class="footer container">
-    <p>© 2025 ChatCleanser — умная модерация и игры. Основной домен: <strong class="gradient-text">chatcleanser.duckdns.org</strong> | Связь: @unitydevs1 24/7 ❤️</p>
-    <p style="margin-top: 12px;"><i class="fas fa-magic"></i> Используй /help в чате или переходи по <strong>chatcleanser.duckdns.org/команды</strong> → #commands</p>
+    <p>© 2025 ChatCleanser — умная модерация и игры. Связь: @unitydevs1 24/7 ❤️</p>
+    <p style="margin-top: 12px;"><i class="fas fa-magic"></i> Используй /help в чате или переходи по ссылкам: <strong>#commands</strong> — все команды | <strong>#moderation</strong> — инструменты модерации</p>
 </footer>
 
 <script>
