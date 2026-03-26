@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>ChatCleanser Bot — Умный помощник и модерация для Telegram</title>
+    <meta name="description" content="ChatCleanser — современный бот для модерации и развлечений в Telegram. Антиспам, игры, защита от токсичности и полный контроль чата.">
+    <!-- Open Graph для соцсетей -->
+    <meta property="og:title" content="ChatCleanser — Твой AI-помощник в Telegram">
+    <meta property="og:description" content="Модерация, игры, защита от спама и многое другое. Присоединяйся!">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://chatcleanser.duckdns.org">
+    <!-- Google Fonts + Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0c15;
+            color: #edf2ff;
+            line-height: 1.5;
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Анимированный градиентный фон */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 30%, rgba(79, 70, 229, 0.15), rgba(6, 182, 212, 0.05), transparent 70%),
+                        radial-gradient(circle at 80% 70%, rgba(168, 85, 247, 0.12), transparent 60%),
+                        repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 8px);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgPulse 8s ease-in-out infinite;
+        }
+
+        @keyframes bgPulse {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
+        }
+
+        /* Анимированные частицы (canvas) */
+        #particlesCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 28px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #c084fc, #60a5fa, #2dd4bf);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            background-size: 200% auto;
+            animation: shimmer 3s ease infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .btn-primary {
+            background: linear-gradient(105deg, #4f46e5, #2563eb);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            box-shadow: 0 10px 25px -5px #4f46e580;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg);
+            transition: 0.6s;
+            opacity: 0;
+        }
+
+        .btn-primary:hover::after {
+            left: 100%;
+            opacity: 1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 20px 30px -8px #3b82f6;
+        }
+
+        .btn-outline {
+            background: rgba(59,130,246,0.1);
+            backdrop-filter: blur(4px);
+            border: 1.5px solid #3b82f6;
+            color: #b9e2ff;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-outline:hover {
+            background: #3b82f620;
+            border-color: #a855f7;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            flex-wrap: wrap;
+            gap: 20px;
+            backdrop-filter: blur(8px);
+            background: rgba(10, 12, 21, 0.6);
+            border-radius: 80px;
+            margin-top: 16px;
+            padding: 12px 28px;
+            border: 1px solid rgba(79, 70, 229, 0.3);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+            transition: transform 0.2s;
+        }
+        .logo:hover { transform: scale(1.02); }
+
+        .logo i { color: #818cf8; }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #cbd5f0;
+            font-weight: 500;
+            transition: 0.2s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -6px;
+            left: 0;
+            width: 0%;
+            height: 2px;
+            background: linear-gradient(90deg, #818cf8, #c084fc);
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover { color: white; }
+
+        /* Hero секция с анимацией появления */
+        .hero {
+            padding: 60px 0 40px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 50px;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content { flex: 1.2; }
+        .hero-badge {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            border-radius: 100px;
+            padding: 6px 18px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 24px;
+            border: 1px solid #4f46e5;
+            animation: pulseGlow 2s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); border-color: #4f46e5; }
+            70% { box-shadow: 0 0 0 8px rgba(79, 70, 229, 0); border-color: #a855f7; }
+            100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); }
+        }
+
+        .hero-content h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.2; margin-bottom: 20px; }
+        .hero-content p { font-size: 1.2rem; color: #b9c7e6; max-width: 550px; margin-bottom: 32px; }
+
+        .hero-stats {
+            flex: 0.8;
+            background: rgba(15, 25, 45, 0.6);
+            backdrop-filter: blur(12px);
+            border-radius: 2rem;
+            padding: 28px 24px;
+            border: 1px solid #2d3a60;
+            transition: transform 0.3s;
+        }
+        .hero-stats:hover { transform: translateY(-5px); }
+
+        .stat-item { display: flex; align-items: center; gap: 18px; margin-bottom: 24px; }
+        .stat-icon { font-size: 2rem; color: #818cf8; }
+        .stat-info h3 { font-size: 1.8rem; font-weight: 700; }
+
+        /* Блок команд с анимацией карточек */
+        .commands-section {
+            background: rgba(14, 19, 34, 0.7);
+            backdrop-filter: blur(10px);
+            border-radius: 48px;
+            padding: 40px 32px;
+            margin: 40px 0;
+            border: 1px solid #2d3a60;
+            transition: all 0.3s;
+        }
+
+        .command-category { margin-bottom: 42px; opacity: 0; animation: slideFade 0.6s forwards; animation-delay: calc(var(--order, 0) * 0.1s); }
+        .category-title { font-size: 1.7rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #4f46e5; padding-left: 20px; }
+
+        .commands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
+        .cmd-item {
+            background: rgba(11, 16, 34, 0.8);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-family: monospace;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s;
+            border: 1px solid #2a3650;
+        }
+        .cmd-item:hover { transform: translateX(5px); border-color: #818cf8; background: #0f1730; }
+        .cmd-item i { width: 24px; color: #a78bfa; }
+        .cmd-item span { font-weight: 600; color: #cbd5ff; }
+        .cmd-desc { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #94a3d8; margin-left: 34px; margin-top: 4px; }
+
+        .feature-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(8px);
+            border-radius: 28px;
+            padding: 24px;
+            transition: all 0.3s ease;
+            border: 1px solid #2a3650;
+        }
+        .feature-card:hover { transform: translateY(-8px) scale(1.02); border-color: #818cf8; box-shadow: 0 20px 30px -15px #00000060; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; margin: 40px 0; }
+
+        .admin-card {
+            background: linear-gradient(135deg, rgba(11, 17, 34, 0.9), rgba(7, 11, 22, 0.9));
+            backdrop-filter: blur(12px);
+            border-radius: 42px;
+            padding: 48px 32px;
+            text-align: center;
+            border: 1px solid #4f46e5;
+            margin: 40px 0;
+            transition: all 0.3s;
+        }
+        .admin-card:hover { transform: scale(1.01); box-shadow: 0 25px 40px -20px #4f46e5; }
+
+        .footer {
+            border-top: 1px solid #1f2a44;
+            padding: 40px 0;
+            text-align: center;
+            color: #7e8bb0;
+            position: relative;
+            z-index: 2;
+        }
+        .domain-badge {
+            background: #111927;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-family: monospace;
+            border: 1px solid #4f46e5;
+        }
+
+        @keyframes slideFade {
+            from { opacity: 0; transform: translateX(-15px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @media (max-width: 760px) {
+            .hero-content h1 { font-size: 2.2rem; }
+            .commands-grid { grid-template-columns: 1fr; }
+            nav { flex-direction: column; background: rgba(10,12,21,0.9); }
+        }
+
+        /* floating elements */
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+
+<canvas id="particlesCanvas"></canvas>
+
+<header class="container">
+    <nav>
+        <div class="logo">
+            <i class="fas fa-robot"></i> Chat<span class="gradient-text">Cleanser</span>
+        </div>
+        <div class="nav-links">
+            <a href="#home">Главная</a>
+            <a href="#commands">Команды</a>
+            <a href="#moderation">Модерация</a>
+            <a href="#admin-team">Админ</a>
+            <a href="https://t.me/ChatCleanser_bot" target="_blank" class="btn-outline" style="padding: 8px 18px;"><i class="fab fa-telegram"></i> Бот</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <div id="home" class="container">
+        <div class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fas fa-heart" style="color:#f472b6;"></i> Твой AI-друг | chatcleanser.duckdns.org
+                </div>
+                <h1>👋 Привет, <span class="gradient-text">дружище!</span></h1>
+                <p>Я — твой новый помощник в чате. Сделаю общение удобнее, веселее и безопаснее. У меня куча крутых фишек — от забавных игр до мощных инструментов модерации.</p>
+                <div class="hero-buttons" style="display: flex; gap: 18px; flex-wrap: wrap;">
+                    <a href="https://t.me/ChatCleanser_bot" target="_blank" class="btn-primary"><i class="fab fa-telegram"></i> Добавить в группу</a>
+                    <a href="#commands" class="btn-outline"><i class="fas fa-terminal"></i> Все команды</a>
+                </div>
+                <div style="margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap;">
+                    <span class="domain-badge"><i class="fas fa-link"></i> chatcleanser.duckdns.org/команды → #commands</span>
+                    <span class="domain-badge"><i class="fas fa-shield"></i> домен/модерация → #moderation</span>
+                </div>
+            </div>
+            <div class="hero-stats floating">
+                <div class="stat-item"><div class="stat-icon"><i class="fas fa-gamepad"></i></div><div class="stat-info"><h3>15+</h3><span>веселых игр</span></div></div>
+                <div class="stat-item"><div class="stat-icon"><i class="fas fa-gavel"></i></div><div class="stat-info"><h3>20+</h3><span>команд модерации</span></div></div>
+                <div class="stat-item"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-info"><h3>500+</h3><span>активных чатов</span></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ПОЛНЫЙ ФУНКЦИОНАЛ С КОМАНДАМИ -->
+    <div id="commands" class="container">
+        <div class="commands-section">
+            <div style="text-align: center; margin-bottom: 32px;">
+                <i class="fas fa-list-ul" style="font-size: 2.5rem; color: #818cf8;"></i>
+                <h2 class="gradient-text" style="font-size: 2rem; margin-top: 8px;">📚 Все команды бота</h2>
+                <p style="color: #9ca9d4;">аккуратно разложил по полочкам — пользуйся!</p>
+            </div>
+
+            <!-- Категории с динамическими задержками -->
+            <div class="command-category" style="--order:1"><div class="category-title"><i class="fas fa-smile"></i> 👤 Для всех без исключения</div>
+                <div class="commands-grid">
+                    <div><div class="cmd-item"><i class="fas fa-question-circle"></i><span>/help</span></div><div class="cmd-desc">эта самая шпаргалка</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-user"></i><span>/profile</span></div><div class="cmd-desc">загляни в свой профиль</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-dice-d6"></i><span>/dick</span></div><div class="cmd-desc">сыграй в «письку» — забавная игра</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-trophy"></i><span>/top</span></div><div class="cmd-desc">топ успешных игроков</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-coins"></i><span>/balance</span></div><div class="cmd-desc">проверь свои очки</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-brain"></i><span>/game</span></div><div class="cmd-desc">угадай число и выиграй</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-slots"></i><span>/casino</span></div><div class="cmd-desc">попытай удачу в казино</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-store"></i><span>/shop</span></div><div class="cmd-desc">загляни в магазин за ништяками</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-crown"></i><span>/vip</span></div><div class="cmd-desc">что даёт VIP‑статус</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-box"></i><span>/inventory</span></div><div class="cmd-desc">открой свой инвентарь</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-shield-alt"></i><span>/staff</span></div><div class="cmd-desc">познакомься с админами чата</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-id-card"></i><span>/id</span></div><div class="cmd-desc">узнай свой уникальный ID</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-heart"></i><span>/love @user</span></div><div class="cmd-desc">проверь совместимость с другом</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-coins"></i><span>/coin</span></div><div class="cmd-desc">подбрось монетку</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-cube"></i><span>/cube</span></div><div class="cmd-desc">брось кубик</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-dice"></i><span>/dice</span></div><div class="cmd-desc">брось два кубика</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-hand-peace"></i><span>/rps</span></div><div class="cmd-desc">камень‑ножницы‑бумага</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-quote-right"></i><span>/quote</span></div><div class="cmd-desc">мудрая цитата</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-laugh"></i><span>/anecdote</span></div><div class="cmd-desc">свежий анекдот</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-lightbulb"></i><span>/fact</span></div><div class="cmd-desc">узнай что‑то новое</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-star"></i><span>/rep @user</span></div><div class="cmd-desc">поставь репутацию другу</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-chart-simple"></i><span>/repstats</span></div><div class="cmd-desc">топ репутации</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-user-plus"></i><span>/friend @user</span></div><div class="cmd-desc">добавь в друзья</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-users"></i><span>/friends</span></div><div class="cmd-desc">список друзей</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-ring"></i><span>/marry @user</span></div><div class="cmd-desc">сделай предложение</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-heart-broken"></i><span>/divorce</span></div><div class="cmd-desc">развестись (без обид)</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-flag"></i><span>/clan</span></div><div class="cmd-desc">изучи кланы</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-medal"></i><span>/achievements</span></div><div class="cmd-desc">твои достижения</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-book"></i><span>/rules</span></div><div class="cmd-desc">правила чата</div></div>
+                    <div><div class="cmd-item"><i class="fas fa-bullhorn"></i><span>@all</span></div><div class="cmd-desc">упомяни всех (доступно с 5‑го уровня)</div></div>
+                </div>
+            </div>
+
+            <div class="command-category" style="--order:2"><div class="category-title"><i class="fas fa-shield-hooded"></i> 🛡 Для тех, кто помогает поддерживать порядок (уровень 1+)</div>
+                <div class="commands-grid"><div><div class="cmd-item"><i class="fas fa-exclamation-triangle"></i><span>/warn @user причина</span></div><div class="cmd-desc">выдай предупреждение</div></div><div><div class="cmd-item"><i class="fas fa-eye"></i><span>/warns @user</span></div><div class="cmd-desc">предупреждения пользователя</div></div></div></div>
+            <div class="command-category" style="--order:3"><div class="category-title"><i class="fas fa-hammer"></i> 🔨 Для модераторов (уровень 2+)</div><div class="commands-grid"><div><div class="cmd-item"><i class="fas fa-microphone-slash"></i><span>/mute @user 10m причина</span></div><div class="cmd-desc">заглушить участника</div></div><div><div class="cmd-item"><i class="fas fa-microphone"></i><span>/unmute @user</span></div><div class="cmd-desc">вернуть право говорить</div></div><div><div class="cmd-item"><i class="fas fa-shoe-prints"></i><span>/kick @user причина</span></div><div class="cmd-desc">попрощаться с нарушителем</div></div></div></div>
+            <div class="command-category" style="--order:4"><div class="category-title"><i class="fas fa-skull"></i> ⛔ Старшие модераторы (уровень 3+)</div><div class="commands-grid"><div><div class="cmd-item"><i class="fas fa-ban"></i><span>/ban @user время причина</span></div><div class="cmd-desc">заблокировать на срок</div></div><div><div class="cmd-item"><i class="fas fa-unlock"></i><span>/unban @user</span></div><div class="cmd-desc">разблокировать</div></div><div><div class="cmd-item"><i class="fas fa-eraser"></i><span>/clearwarns @user</span></div><div class="cmd-desc">очистить предупреждения</div></div><div><div class="cmd-item"><i class="fas fa-thumbs-down"></i><span>/unrep @user</span></div><div class="cmd-desc">снизить репутацию</div></div><div><div class="cmd-item"><i class="fas fa-water"></i><span>/antiflood_on /off</span></div><div class="cmd-desc">защита от флуда</div></div><div><div class="cmd-item"><i class="fas fa-font"></i><span>/antimat_on /off</span></div><div class="cmd-desc">фильтр мата</div></div><div><div class="cmd-item"><i class="fas fa-link"></i><span>/antilink_on /off</span></div><div class="cmd-desc">блокировка ссылок</div></div></div></div>
+            <div class="command-category" style="--order:5"><div class="category-title"><i class="fas fa-bolt"></i> ⚡ Администраторы (уровень 4+)</div><div class="commands-grid"><div><div class="cmd-item"><i class="fas fa-user-shield"></i><span>/setadmin @user уровень</span></div><div class="cmd-desc">назначить админа</div></div><div><div class="cmd-item"><i class="fas fa-snowplow"></i><span>/freeze @user причина</span></div><div class="cmd-desc">заморозь админа</div></div><div><div class="cmd-item"><i class="fas fa-temperature-high"></i><span>/unfreeze @user</span></div><div class="cmd-desc">разморозить</div></div><div><div class="cmd-item"><i class="fas fa-edit"></i><span>/rules set текст</span></div><div class="cmd-desc">обновить правила чата</div></div><div><div class="cmd-item"><i class="fas fa-shield-virus"></i><span>/antiraid</span></div><div class="cmd-desc">активировать антирейд</div></div></div></div>
+            <div class="command-category" style="--order:6"><div class="category-title"><i class="fas fa-crown"></i> 👑 Для самых главных (уровень 5+)</div><div class="commands-grid"><div><div class="cmd-item"><i class="fas fa-bullhorn"></i><span>@all текст</span></div><div class="cmd-desc">упомянуть всех в чате</div></div></div></div>
+            <div style="background: rgba(10,15,28,0.8); border-radius: 28px; padding: 20px; margin-top: 24px;"><p><i class="fas fa-info-circle"></i> 💡 Как пользоваться — ответь на сообщение и напиши команду, или используй /команда @username. Для @all просто напиши текст в чате!</p><p style="margin-top: 12px;">✨ С теплом, твой бот-помощник ❤️</p></div>
+        </div>
+    </div>
+
+    <div id="moderation" class="container">
+        <div class="features-grid">
+            <div class="feature-card"><i class="fas fa-robot" style="font-size: 2rem; color:#818cf8;"></i><h3 style="margin: 16px 0 8px;">AI-антиспам</h3><p>Нейросеть определяет рекламу, флуд, повторяющиеся сообщения. Защита от масс-упоминаний и капча при входе.</p></div>
+            <div class="feature-card"><i class="fas fa-smile-wink" style="font-size: 2rem; color:#f472b6;"></i><h3 style="margin: 16px 0 8px;">Фильтр токсичности</h3><p>Удаляет мат, оскорбления, травлю на 20+ языках. Настраиваемая строгость и исключения.</p></div>
+            <div class="feature-card"><i class="fas fa-chart-line" style="font-size: 2rem; color:#10b981;"></i><h3 style="margin: 16px 0 8px;">Статистика & аудит</h3><p>Логи действий, графики нарушений, отчёты для админов — полный контроль над порядком.</p></div>
+            <div class="feature-card"><i class="fas fa-dice-d20" style="font-size: 2rem; color:#f59e0b;"></i><h3 style="margin: 16px 0 8px;">Игровая платформа</h3><p>Казино, кости, свадьбы, репутация, кланы — вовлекайте участников в активное общение.</p></div>
+        </div>
+    </div>
+
+    <div id="admin-team" class="container">
+        <div class="admin-card">
+            <div class="admin-avatar" style="width: 90px; height: 90px; background: linear-gradient(145deg,#1e2a5e,#2d3a6e); border-radius: 100px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 3rem;"><i class="fab fa-telegram"></i></div>
+            <h2 style="font-size: 2rem;">👑 Главный тех. администратор</h2>
+            <p style="font-size: 1.5rem; font-weight: 600; margin: 10px 0;">@unitydevs1</p>
+            <p style="max-width: 600px; margin: 0 auto 24px;">Создатель ChatCleanser, эксперт по безопасности и архитектор AI-модерации. Лично сопровождает интеграцию крупных сообществ и всегда на связи.</p>
+            <div style="display: flex; gap: 18px; justify-content: center; flex-wrap: wrap;"><a href="https://t.me/unitydevs1" target="_blank" class="btn-primary"><i class="fab fa-telegram"></i> Написать админу</a><a href="https://t.me/ChatCleanser_bot" target="_blank" class="btn-outline"><i class="fas fa-headset"></i> Поддержка бота</a></div>
+            <div class="domain-badge" style="margin-top: 28px; display: inline-block;"><i class="fas fa-at"></i> chatcleanser.duckdns.org/администратор → #admin-team</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div style="background: radial-gradient(ellipse at 30% 40%, rgba(17,24,39,0.8), rgba(3,5,12,0.9)); backdrop-filter: blur(8px); border-radius: 48px; padding: 56px 32px; text-align: center; margin-bottom: 40px;">
+            <i class="fas fa-star" style="font-size: 2.5rem; color: #fbbf24; animation: pulseGlow 1.5s infinite;"></i>
+            <h2 style="font-size: 2rem; margin: 16px 0;">Готов к идеальному чату?</h2>
+            <p style="font-size: 1.1rem; max-width: 550px; margin: 0 auto 28px;">Пригласи бота, играй, модерируй — и пусть твое сообщество станет самым крутым местом в Telegram!</p>
+            <a href="https://t.me/ChatCleanser_bot" target="_blank" class="btn-primary" style="font-size: 1.1rem;"><i class="fab fa-telegram"></i> Добавить ChatCleanser</a>
+        </div>
+    </div>
+</main>
+
+<footer class="footer container">
+    <p>© 2025 ChatCleanser — умная модерация и игры. Основной домен: <strong class="gradient-text">chatcleanser.duckdns.org</strong> | Связь: @unitydevs1 24/7 ❤️</p>
+    <p style="margin-top: 12px;"><i class="fas fa-magic"></i> Используй /help в чате или переходи по <strong>chatcleanser.duckdns.org/команды</strong> → #commands</p>
+</footer>
+
+<script>
+    // Анимированные частицы (canvas)
+    const canvas = document.getElementById('particlesCanvas');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth, height = window.innerHeight;
+    let particles = [];
+
+    function resizeCanvas() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        initParticles();
+    }
+
+    function initParticles() {
+        particles = [];
+        const particleCount = Math.min(80, Math.floor(width * height / 12000));
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: Math.random() * width,
+                y: Math.random() * height,
+                radius: Math.random() * 3 + 1,
+                alpha: Math.random() * 0.4 + 0.1,
+                speedX: (Math.random() - 0.5) * 0.3,
+                speedY: (Math.random() - 0.5) * 0.2 + 0.1,
+                color: `hsl(${Math.random() * 60 + 240}, 70%, 60%)`
+            });
+        }
+    }
+
+    function drawParticles() {
+        if (!ctx) return;
+        ctx.clearRect(0, 0, width, height);
+        for (let p of particles) {
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+            ctx.fillStyle = p.color;
+            ctx.shadowBlur = 8;
+            ctx.shadowColor = "#818cf8";
+            ctx.globalAlpha = p.alpha;
+            ctx.fill();
+            p.x += p.speedX;
+            p.y += p.speedY;
+            if (p.x < -10) p.x = width + 10;
+            if (p.x > width + 10) p.x = -10;
+            if (p.y < -10) p.y = height + 10;
+            if (p.y > height + 10) p.y = -10;
+        }
+        requestAnimationFrame(drawParticles);
+    }
+
+    window.addEventListener('resize', () => { resizeCanvas(); });
+    resizeCanvas();
+    drawParticles();
+</script>
+</body>
+</html>
