@@ -257,61 +257,161 @@
 
         /* ── Commands section ── */
         .commands-section {
-            background: rgba(14,19,34,0.7); backdrop-filter: blur(10px);
-            border-radius: 48px; padding: 40px 32px; margin: 40px 0;
-            border: 1px solid #2d3a60; transition: all 0.3s;
+            position: relative; overflow: hidden;
+            background: linear-gradient(180deg, rgba(14,19,34,0.85), rgba(9,13,26,0.92));
+            backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+            border-radius: 48px; padding: 48px 36px 40px; margin: 40px 0;
+            border: 1px solid #2d3a60;
+            box-shadow: 0 50px 90px -50px rgba(79,70,229,0.75), inset 0 1px 0 rgba(255,255,255,0.05);
+            transition: box-shadow 0.3s;
+        }
+        .commands-section::before {
+            content: ''; position: absolute; top: 0; left: 10%; right: 10%; height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(129,140,248,.9), rgba(192,132,252,.7), transparent);
         }
 
         /* ── Search box ── */
         .search-wrap {
             display: flex; align-items: center; gap: 12px;
-            max-width: 520px; margin: 0 auto 32px;
-            background: rgba(11,16,34,0.9);
+            max-width: 640px; margin: 0 auto 12px;
+            background: rgba(11,16,34,0.92);
             border: 1px solid #2a3650; border-radius: 40px;
-            padding: 10px 20px;
-            transition: border-color 0.2s;
+            padding: 12px 18px;
+            transition: border-color .2s, box-shadow .2s, transform .2s;
         }
-        .search-wrap:focus-within { border-color: #818cf8; box-shadow: 0 0 0 3px rgba(129,140,248,0.15); }
-        .search-wrap i { color: #818cf8; font-size: 1rem; }
+        .search-wrap:focus-within {
+            border-color: #818cf8;
+            box-shadow: 0 0 0 4px rgba(129,140,248,0.14), 0 18px 40px -24px rgba(129,140,248,.9);
+            transform: translateY(-1px);
+        }
+        .search-wrap > i { color: #818cf8; font-size: 1rem; }
         #cmd-search {
-            flex: 1; background: transparent; border: none; outline: none;
-            color: #edf2ff; font-family: 'Inter', sans-serif; font-size: 0.95rem;
+            flex: 1; min-width: 0; background: transparent; border: none; outline: none;
+            color: #edf2ff; font-family: 'Inter', sans-serif; font-size: 1rem;
         }
         #cmd-search::placeholder { color: #4a5580; }
         #search-count {
-            font-size: 0.78rem; color: #818cf8; white-space: nowrap;
-            background: rgba(79,70,229,0.15); padding: 2px 10px; border-radius: 20px;
+            font-size: 0.76rem; color: #a5b4fc; white-space: nowrap;
+            background: rgba(79,70,229,0.18); border: 1px solid rgba(129,140,248,0.3);
+            padding: 3px 11px; border-radius: 20px;
+        }
+        .search-clear {
+            display: none; width: 26px; height: 26px; border-radius: 50%;
+            border: 1px solid #2a3650; background: #131a30; color: #9fb0dd;
+            cursor: pointer; font-size: .85rem; line-height: 1; transition: .25s;
+        }
+        .search-clear.show { display: flex; align-items: center; justify-content: center; }
+        .search-clear:hover { background: #232c48; color: #fff; border-color: #818cf8; transform: rotate(90deg); }
+        .search-hint { text-align: center; color: #6b78a8; font-size: .76rem; margin: 0 0 26px; }
+        .search-hint kbd {
+            font-family: inherit; background: #131a30; border: 1px solid #2a3650;
+            border-bottom-width: 2px; border-radius: 6px; padding: 1px 6px;
+            color: #cbd5f0; font-size: .72rem;
         }
 
-        .command-category { margin-bottom: 42px; opacity: 0; animation: slideFade 0.7s cubic-bezier(0.16,1,0.3,1) forwards; animation-delay: calc(var(--order, 0) * 0.12s); }
+        /* ── Filter chips ── */
+        .chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 0 0 30px; }
+        .chip {
+            font-size: .78rem; font-weight: 500; padding: 6px 14px; border-radius: 999px;
+            border: 1px solid #2a3650; background: rgba(11,16,34,.85); color: #9fb0dd;
+            cursor: pointer; transition: .22s; user-select: none;
+        }
+        .chip:hover { border-color: #818cf8; color: #fff; transform: translateY(-2px); box-shadow: 0 8px 18px -10px rgba(129,140,248,.9); }
+        .chip.active {
+            background: linear-gradient(135deg, #4f46e5, #a855f7); border-color: transparent; color: #fff;
+            box-shadow: 0 10px 22px -10px rgba(124,92,255,.95);
+        }
+
+        /* ── Categories ── */
+        .command-category { margin-bottom: 40px; opacity: 0; animation: slideFade 0.7s cubic-bezier(0.16,1,0.3,1) forwards; animation-delay: calc(var(--order, 0) * 0.12s); }
         .command-category.hidden { display: none; }
-        .category-title { font-size: 1.7rem; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; border-left: 4px solid #4f46e5; padding-left: 20px; transition: border-color 0.3s; }
-        .category-title:hover { border-color: #a855f7; }
-        .category-title i { transition: transform 0.3s; }
-        .category-title:hover i { transform: scale(1.2) rotate(-8deg); }
-
-        .commands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; }
-
-        .cmd-item {
-            background: rgba(11,16,34,0.8);
-            padding: 8px 16px; border-radius: 40px;
-            font-family: monospace; font-size: 0.9rem;
-            display: flex; align-items: center; gap: 10px;
-            transition: transform 0.25s cubic-bezier(0.16,1,0.3,1), border-color 0.25s, background 0.25s, box-shadow 0.25s;
-            border: 1px solid #2a3650;
+        .category-title {
+            display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+            font-size: 1.2rem; font-weight: 700; letter-spacing: -0.01em;
+            padding: 11px 16px; border-radius: 16px;
+            background: linear-gradient(90deg, rgba(79,70,229,.18), rgba(168,85,250,.05) 60%, transparent);
+            border: 1px solid rgba(129,140,248,.18); border-left: 4px solid #4f46e5;
+            transition: .3s;
         }
-        .cmd-item:hover {
-            transform: translateX(8px);
+        .category-title:hover {
+            border-left-color: #c084fc;
+            background: linear-gradient(90deg, rgba(79,70,229,.26), rgba(168,85,250,.08) 60%, transparent);
+        }
+        .cat-ico {
+            width: 34px; height: 34px; border-radius: 11px; flex: none; display: grid; place-items: center;
+            background: linear-gradient(135deg, #4f46e5, #a855f7); color: #fff;
+            box-shadow: 0 8px 18px -8px rgba(79,70,229,.9); transition: transform .3s;
+        }
+        .category-title:hover .cat-ico { transform: rotate(-8deg) scale(1.08); }
+        .cat-count {
+            margin-left: auto; font-size: .72rem; font-weight: 600; color: #a5b4fc;
+            background: rgba(11,16,34,.8); border: 1px solid #2a3650; padding: 3px 10px; border-radius: 999px;
+            white-space: nowrap;
+        }
+
+        /* ── Command cards ── */
+        .commands-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+
+        .cmd-entry {
+            position: relative; overflow: hidden;
+            background: linear-gradient(140deg, rgba(13,18,36,.95), rgba(9,13,27,.88));
+            border: 1px solid #232c48; border-radius: 16px; padding: 12px 14px;
+            transition: transform .25s cubic-bezier(0.16,1,0.3,1), border-color .25s, box-shadow .25s, background .25s;
+        }
+        .cmd-entry::after {
+            content: ''; position: absolute; top: -60%; left: -40%; width: 60%; height: 200%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,.07), transparent);
+            transform: skewX(-20deg) translateX(-160%); transition: .6s; pointer-events: none;
+        }
+        .cmd-entry:hover {
+            transform: translateY(-4px);
             border-color: #818cf8;
-            background: #0f1730;
-            box-shadow: 0 0 20px rgba(129,140,248,0.25), inset 0 0 20px rgba(79,70,229,0.05);
+            background: linear-gradient(140deg, rgba(17,23,48,.98), rgba(11,16,34,.92));
+            box-shadow: 0 18px 34px -18px rgba(129,140,248,.85), 0 0 0 1px rgba(129,140,248,.2);
         }
-        .cmd-item i { width: 24px; color: #a78bfa; transition: transform 0.3s, color 0.3s; }
-        .cmd-item:hover i { transform: scale(1.2); color: #c084fc; }
-        .cmd-item span { font-weight: 600; color: #cbd5ff; }
-        .cmd-desc { font-family: 'Inter', sans-serif; font-size: 0.75rem; color: #94a3d8; margin-left: 34px; margin-top: 4px; }
+        .cmd-entry:hover::after { transform: skewX(-20deg) translateX(340%); }
+        .cmd-head { display: flex; align-items: center; gap: 10px; }
+        .cmd-ico {
+            width: 32px; height: 32px; border-radius: 10px; flex: none; display: grid; place-items: center;
+            font-size: .85rem; color: #c4b5fd;
+            background: linear-gradient(135deg, rgba(79,70,229,.4), rgba(168,85,250,.25));
+            border: 1px solid rgba(129,140,248,.35); transition: .25s;
+        }
+        .cmd-entry:hover .cmd-ico { color: #fff; box-shadow: 0 0 14px rgba(129,140,248,.6); transform: scale(1.06); }
+        .cmd-name {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+            font-size: .9rem; font-weight: 600; color: #dbe4ff;
+            word-break: break-word; line-height: 1.35;
+        }
+        .cmd-lvl {
+            margin-left: auto; flex: none; font-size: .64rem; font-weight: 700; letter-spacing: .04em;
+            padding: 2px 8px; border-radius: 999px; white-space: nowrap;
+            color: #fcd34d; background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.35);
+        }
+        .cmd-lvl.l1 { color:#86efac; background:rgba(34,197,94,.12); border-color:rgba(34,197,94,.35); }
+        .cmd-lvl.l2 { color:#67e8f9; background:rgba(34,211,238,.12); border-color:rgba(34,211,238,.35); }
+        .cmd-lvl.l3 { color:#fdba74; background:rgba(249,115,22,.12); border-color:rgba(249,115,22,.35); }
+        .cmd-lvl.l4 { color:#fca5a5; background:rgba(239,68,68,.12); border-color:rgba(239,68,68,.35); }
+        .cmd-lvl.l5 {
+            color:#fde68a; border-color:rgba(245,158,11,.5);
+            background: linear-gradient(135deg, rgba(245,158,11,.22), rgba(236,72,153,.18));
+            box-shadow: 0 0 12px -3px rgba(245,158,11,.6);
+        }
+        .cmd-desc { font-size: .76rem; color: #8b9ac9; margin-top: 6px; padding-left: 42px; }
+        mark.hl {
+            background: rgba(45,212,191,.22); color: #7ff5e4; border-radius: 4px;
+            padding: 0 2px; box-shadow: 0 0 0 1px rgba(45,212,191,.45);
+        }
 
         .cmd-entry.hidden { display: none; }
+        .no-results {
+            display: none; text-align: center; padding: 38px 20px;
+            border: 1px dashed #2d3a60; border-radius: 24px;
+            background: rgba(11,16,34,.6); color: #94a3d8;
+        }
+        .no-results.show { display: block; }
+        .no-results i { font-size: 2rem; color: #4f5b8c; display: block; margin-bottom: 12px; }
+        .no-results button { margin-top: 16px; }
 
         /* ── Features grid ── */
         .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; margin: 40px 0; }
@@ -448,7 +548,7 @@
     <!-- КОМАНДЫ -->
     <div id="commands" class="container">
         <div class="commands-section">
-            <div style="text-align:center;margin-bottom:24px;">
+            <div style="text-align:center;margin-bottom:26px;">
                 <i class="fas fa-list-ul" style="font-size:2.5rem;color:#818cf8;"></i>
                 <h2 class="gradient-text" style="font-size:2rem;margin-top:8px;">📚 Все команды бота</h2>
                 <p style="color:#9ca9d4;">аккуратно разложил по полочкам — пользуйся!</p>
@@ -457,128 +557,152 @@
             <!-- Поиск -->
             <div class="search-wrap">
                 <i class="fas fa-search"></i>
-                <input id="cmd-search" type="text" placeholder="Поиск по командам..." autocomplete="off">
+                <input id="cmd-search" type="text" placeholder="Поиск: /mute, мут, заглушить, очки…" autocomplete="off">
                 <span id="search-count"></span>
+                <button class="search-clear" id="search-clear" type="button" title="Очистить поиск">&#10005;</button>
+            </div>
+            <p class="search-hint">Ищет по названию, описанию и ключевым словам · <kbd>Ctrl</kbd>+<kbd>K</kbd> или <kbd>/</kbd> — фокус в поиск · <kbd>Esc</kbd> — сбросить</p>
+
+            <!-- Фильтр по категориям -->
+            <div class="chips">
+                <button class="chip active" data-cat="all" type="button">✨ Все</button>
+                <button class="chip" data-cat="base" type="button">👤 Для всех</button>
+                <button class="chip" data-cat="games" type="button">🎮 Игры</button>
+                <button class="chip" data-cat="social" type="button">🤝 Социальные</button>
+                <button class="chip" data-cat="lvl1" type="button">1+ lvl</button>
+                <button class="chip" data-cat="lvl2" type="button">2+ lvl</button>
+                <button class="chip" data-cat="lvl3" type="button">3+ lvl</button>
+                <button class="chip" data-cat="lvl4" type="button">4+ lvl</button>
+                <button class="chip" data-cat="lvl5" type="button">5+ lvl 👑</button>
             </div>
 
             <!-- Для всех -->
-            <div class="command-category" style="--order:1">
-                <div class="category-title"><i class="fas fa-smile"></i> 👤 Для всех</div>
+            <div class="command-category" style="--order:1" data-cat="base">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-smile"></i></span>👤 Для всех<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-play-circle"></i><span>/start</span></div><div class="cmd-desc">запустить бота</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-question-circle"></i><span>/help</span></div><div class="cmd-desc">список команд</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-user"></i><span>/profile</span></div><div class="cmd-desc">твой профиль</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-id-card"></i><span>/id [@user]</span></div><div class="cmd-desc">узнать ID пользователя</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-coins"></i><span>/balance</span></div><div class="cmd-desc">проверить очки</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-calendar-check"></i><span>/daily</span></div><div class="cmd-desc">+10 очков раз в день</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-exchange-alt"></i><span>/transfer @user сумма</span></div><div class="cmd-desc">перевести очки другу</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-store"></i><span>/shop</span></div><div class="cmd-desc">магазин</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-shopping-cart"></i><span>/buy [номер]</span></div><div class="cmd-desc">купить товар</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-box"></i><span>/inventory</span></div><div class="cmd-desc">инвентарь</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-crown"></i><span>/vip</span></div><div class="cmd-desc">VIP-статус и привилегии</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-book"></i><span>/rules</span></div><div class="cmd-desc">правила чата</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-shield-alt"></i><span>/staff</span></div><div class="cmd-desc">список администраторов</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-chart-bar"></i><span>/chatstats</span></div><div class="cmd-desc">топ активных участников</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-flag"></i><span>/report причина</span></div><div class="cmd-desc">пожаловаться (ответом на сообщение)</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-bell"></i><span>/calladmin причина</span></div><div class="cmd-desc">вызвать администратора</div></div>
+                    <div class="cmd-entry"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-play-circle"></i></span><span class="cmd-name">/start</span></div><div class="cmd-desc">запустить бота</div></div>
+                    <div class="cmd-entry"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-question-circle"></i></span><span class="cmd-name">/help</span></div><div class="cmd-desc">список команд</div></div>
+                    <div class="cmd-entry"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-user"></i></span><span class="cmd-name">/profile</span></div><div class="cmd-desc">твой профиль</div></div>
+                    <div class="cmd-entry" data-kw="идентификатор юзер"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-id-card"></i></span><span class="cmd-name">/id [@user]</span></div><div class="cmd-desc">узнать ID пользователя</div></div>
+                    <div class="cmd-entry" data-kw="деньги балл баланс коины"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-coins"></i></span><span class="cmd-name">/balance</span></div><div class="cmd-desc">проверить очки</div></div>
+                    <div class="cmd-entry" data-kw="ежедневный бонус награда"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-calendar-check"></i></span><span class="cmd-name">/daily</span></div><div class="cmd-desc">+10 очков раз в день</div></div>
+                    <div class="cmd-entry" data-kw="перевод отправить деньги"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-exchange-alt"></i></span><span class="cmd-name">/transfer @user сумма</span></div><div class="cmd-desc">перевести очки другу</div></div>
+                    <div class="cmd-entry" data-kw="торговля покупки предметы"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-store"></i></span><span class="cmd-name">/shop</span></div><div class="cmd-desc">магазин</div></div>
+                    <div class="cmd-entry" data-kw="приобрести товар"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-shopping-cart"></i></span><span class="cmd-name">/buy [номер]</span></div><div class="cmd-desc">купить товар</div></div>
+                    <div class="cmd-entry" data-kw="предметы рюкзак вещи"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-box"></i></span><span class="cmd-name">/inventory</span></div><div class="cmd-desc">инвентарь</div></div>
+                    <div class="cmd-entry" data-kw="премиум привилегия подписка"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-crown"></i></span><span class="cmd-name">/vip</span></div><div class="cmd-desc">VIP-статус и привилегии</div></div>
+                    <div class="cmd-entry" data-kw="правила чата регламент"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-book"></i></span><span class="cmd-name">/rules</span></div><div class="cmd-desc">правила чата</div></div>
+                    <div class="cmd-entry" data-kw="админы модераторы персонал"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-shield-alt"></i></span><span class="cmd-name">/staff</span></div><div class="cmd-desc">список администраторов</div></div>
+                    <div class="cmd-entry" data-kw="статистика топ активность"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-chart-bar"></i></span><span class="cmd-name">/chatstats</span></div><div class="cmd-desc">топ активных участников</div></div>
+                    <div class="cmd-entry" data-kw="жалоба репорт пожаловаться"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-flag"></i></span><span class="cmd-name">/report причина</span></div><div class="cmd-desc">пожаловаться (ответом на сообщение)</div></div>
+                    <div class="cmd-entry" data-kw="помощь вызвать модератора"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-bell"></i></span><span class="cmd-name">/calladmin причина</span></div><div class="cmd-desc">вызвать администратора</div></div>
                 </div>
             </div>
 
             <!-- Игры -->
-            <div class="command-category" style="--order:2">
-                <div class="category-title"><i class="fas fa-gamepad"></i> 🎮 Игры</div>
+            <div class="command-category" style="--order:2" data-cat="games">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-gamepad"></i></span>🎮 Игры<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-dice-d6"></i><span>/dick</span></div><div class="cmd-desc">игра «писька» — раз в день</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-trophy"></i><span>/top</span></div><div class="cmd-desc">топ игроков</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-brain"></i><span>/game</span></div><div class="cmd-desc">угадай число от 1 до 10</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-dollar-sign"></i><span>/casino [ставка]</span></div><div class="cmd-desc">казино — испытай удачу</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-heart"></i><span>/love @user</span></div><div class="cmd-desc">совместимость с другом</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-coins"></i><span>/coin</span></div><div class="cmd-desc">подбросить монетку</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-cube"></i><span>/cube</span></div><div class="cmd-desc">бросить кубик</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-dice"></i><span>/dice</span></div><div class="cmd-desc">бросить два кубика</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-hand-peace"></i><span>/rps [камень/ножницы/бумага]</span></div><div class="cmd-desc">камень-ножницы-бумага</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-quote-right"></i><span>/quote</span></div><div class="cmd-desc">мудрая цитата</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-laugh"></i><span>/anecdote</span></div><div class="cmd-desc">свежий анекдот</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-lightbulb"></i><span>/fact</span></div><div class="cmd-desc">интересный факт</div></div>
+                    <div class="cmd-entry" data-kw="гейм развлечение прикол"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-dice-d6"></i></span><span class="cmd-name">/dick</span></div><div class="cmd-desc">игра «писька» — раз в день</div></div>
+                    <div class="cmd-entry" data-kw="лидерборд рейтинг игроков"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-trophy"></i></span><span class="cmd-name">/top</span></div><div class="cmd-desc">топ игроков</div></div>
+                    <div class="cmd-entry" data-kw="угадать число мини-игра"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-brain"></i></span><span class="cmd-name">/game</span></div><div class="cmd-desc">угадай число от 1 до 10</div></div>
+                    <div class="cmd-entry" data-kw="ставки азарт ставка"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-dollar-sign"></i></span><span class="cmd-name">/casino [ставка]</span></div><div class="cmd-desc">казино — испытай удачу</div></div>
+                    <div class="cmd-entry" data-kw="любовь пары свайп"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-heart"></i></span><span class="cmd-name">/love @user</span></div><div class="cmd-desc">совместимость с другом</div></div>
+                    <div class="cmd-entry" data-kw="монетка орёл решка"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-coins"></i></span><span class="cmd-name">/coin</span></div><div class="cmd-desc">подбросить монетку</div></div>
+                    <div class="cmd-entry" data-kw="кубик бросок"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-cube"></i></span><span class="cmd-name">/cube</span></div><div class="cmd-desc">бросить кубик</div></div>
+                    <div class="cmd-entry" data-kw="кости бросок два"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-dice"></i></span><span class="cmd-name">/dice</span></div><div class="cmd-desc">бросить два кубика</div></div>
+                    <div class="cmd-entry" data-kw="камень ножницы бумага rps"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-hand-peace"></i></span><span class="cmd-name">/rps [камень/ножницы/бумага]</span></div><div class="cmd-desc">камень-ножницы-бумага</div></div>
+                    <div class="cmd-entry" data-kw="цитаты мудрость"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-quote-right"></i></span><span class="cmd-name">/quote</span></div><div class="cmd-desc">мудрая цитата</div></div>
+                    <div class="cmd-entry" data-kw="юмор шутка анек"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-laugh"></i></span><span class="cmd-name">/anecdote</span></div><div class="cmd-desc">свежий анекдот</div></div>
+                    <div class="cmd-entry" data-kw="интересный факт познавательно"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-lightbulb"></i></span><span class="cmd-name">/fact</span></div><div class="cmd-desc">интересный факт</div></div>
                 </div>
             </div>
 
             <!-- Социальные -->
-            <div class="command-category" style="--order:3">
-                <div class="category-title"><i class="fas fa-users"></i> 🤝 Социальные</div>
+            <div class="command-category" style="--order:3" data-cat="social">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-users"></i></span>🤝 Социальные<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-star"></i><span>/rep @user</span></div><div class="cmd-desc">поставить репутацию</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-chart-simple"></i><span>/repstats</span></div><div class="cmd-desc">топ репутации</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-user-plus"></i><span>/friend @user</span></div><div class="cmd-desc">добавить в друзья</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-user-minus"></i><span>/unfriend @user</span></div><div class="cmd-desc">удалить из друзей</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-users"></i><span>/friends</span></div><div class="cmd-desc">список друзей</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-ring"></i><span>/marry @user</span></div><div class="cmd-desc">сделать предложение</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-heart-broken"></i><span>/divorce</span></div><div class="cmd-desc">развестись</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-flag"></i><span>/clan create/join/leave/info/top</span></div><div class="cmd-desc">управление кланом</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-medal"></i><span>/achievements</span></div><div class="cmd-desc">твои достижения</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-bullhorn"></i><span>@all</span></div><div class="cmd-desc">упомянуть всех (уровень 5+)</div></div>
+                    <div class="cmd-entry" data-kw="рейтинг плюс реп"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-star"></i></span><span class="cmd-name">/rep @user</span></div><div class="cmd-desc">поставить репутацию</div></div>
+                    <div class="cmd-entry" data-kw="рейтинг репутации топ"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-chart-simple"></i></span><span class="cmd-name">/repstats</span></div><div class="cmd-desc">топ репутации</div></div>
+                    <div class="cmd-entry" data-kw="добавить друга заявка"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-user-plus"></i></span><span class="cmd-name">/friend @user</span></div><div class="cmd-desc">добавить в друзья</div></div>
+                    <div class="cmd-entry" data-kw="удалить друга расстаться"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-user-minus"></i></span><span class="cmd-name">/unfriend @user</span></div><div class="cmd-desc">удалить из друзей</div></div>
+                    <div class="cmd-entry" data-kw="список друзей друзья"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-users"></i></span><span class="cmd-name">/friends</span></div><div class="cmd-desc">список друзей</div></div>
+                    <div class="cmd-entry" data-kw="брак предложение свадьба"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-ring"></i></span><span class="cmd-name">/marry @user</span></div><div class="cmd-desc">сделать предложение</div></div>
+                    <div class="cmd-entry" data-kw="развод расставание"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-heart-broken"></i></span><span class="cmd-name">/divorce</span></div><div class="cmd-desc">развестись</div></div>
+                    <div class="cmd-entry" data-kw="клан гильдия команда create join leave info top"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-flag"></i></span><span class="cmd-name">/clan create/join/leave/info/top</span></div><div class="cmd-desc">управление кланом</div></div>
+                    <div class="cmd-entry" data-kw="награды выполненные цели"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-medal"></i></span><span class="cmd-name">/achievements</span></div><div class="cmd-desc">твои достижения</div></div>
+                    <div class="cmd-entry" data-kw="упомянуть всех оповещение"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-bullhorn"></i></span><span class="cmd-name">@all</span></div><div class="cmd-desc">упомянуть всех (уровень 5+)</div></div>
                 </div>
             </div>
 
             <!-- Уровень 1+ -->
-            <div class="command-category" style="--order:4">
-                <div class="category-title"><i class="fas fa-shield-hooded"></i> 🛡 Кандидат (уровень 1+)</div>
+            <div class="command-category" style="--order:4" data-cat="lvl1" data-lvl="1" data-role="Кандидат">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-shield-hooded"></i></span>🛡 Кандидат (уровень 1+)<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-exclamation-triangle"></i><span>/warn @user причина</span></div><div class="cmd-desc">предупреждение (3 варна = бан)</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-eye"></i><span>/warns @user</span></div><div class="cmd-desc">предупреждения пользователя</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-history"></i><span>/history [@user]</span></div><div class="cmd-desc">история нарушений</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-circle-dot"></i><span>/online</span></div><div class="cmd-desc">онлайн участников</div></div>
+                    <div class="cmd-entry" data-kw="варн предупреждение наказание"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-exclamation-triangle"></i></span><span class="cmd-name">/warn @user причина</span></div><div class="cmd-desc">предупреждение (3 варна = бан)</div></div>
+                    <div class="cmd-entry" data-kw="варны список предупреждений"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-eye"></i></span><span class="cmd-name">/warns @user</span></div><div class="cmd-desc">предупреждения пользователя</div></div>
+                    <div class="cmd-entry" data-kw="нарушения история жалоб"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-history"></i></span><span class="cmd-name">/history [@user]</span></div><div class="cmd-desc">история нарушений</div></div>
+                    <div class="cmd-entry" data-kw="активность сейчас в сети"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-circle-dot"></i></span><span class="cmd-name">/online</span></div><div class="cmd-desc">онлайн участников</div></div>
                 </div>
             </div>
 
             <!-- Уровень 2+ -->
-            <div class="command-category" style="--order:5">
-                <div class="category-title"><i class="fas fa-hammer"></i> 🔨 Мл. модератор (уровень 2+)</div>
+            <div class="command-category" style="--order:5" data-cat="lvl2" data-lvl="2" data-role="Мл. модератор">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-hammer"></i></span>🔨 Мл. модератор (уровень 2+)<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-microphone-slash"></i><span>/mute @user 10m причина</span></div><div class="cmd-desc">заглушить участника</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-microphone"></i><span>/unmute @user</span></div><div class="cmd-desc">снять мут</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-shoe-prints"></i><span>/kick @user причина</span></div><div class="cmd-desc">выгнать из чата</div></div>
+                    <div class="cmd-entry" data-kw="мут заглушить тишина timeout замутить"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-microphone-slash"></i></span><span class="cmd-name">/mute @user 10m причина</span></div><div class="cmd-desc">заглушить участника</div></div>
+                    <div class="cmd-entry" data-kw="снять мут размутить вернуть голос unmute"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-microphone"></i></span><span class="cmd-name">/unmute @user</span></div><div class="cmd-desc">снять мут</div></div>
+                    <div class="cmd-entry" data-kw="кик выгнать исключить удалить участника"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-shoe-prints"></i></span><span class="cmd-name">/kick @user причина</span></div><div class="cmd-desc">выгнать из чата</div></div>
                 </div>
             </div>
 
             <!-- Уровень 3+ -->
-            <div class="command-category" style="--order:6">
-                <div class="category-title"><i class="fas fa-skull"></i> ⛔ Ст. модератор (уровень 3+)</div>
+            <div class="command-category" style="--order:6" data-cat="lvl3" data-lvl="3" data-role="Ст. модератор">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-skull"></i></span>⛔ Ст. модератор (уровень 3+)<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-ban"></i><span>/ban @user [время] причина</span></div><div class="cmd-desc">заблокировать</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-unlock"></i><span>/unban @user</span></div><div class="cmd-desc">разблокировать</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-eraser"></i><span>/clearwarns @user</span></div><div class="cmd-desc">очистить предупреждения</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-thumbs-down"></i><span>/unrep @user</span></div><div class="cmd-desc">снизить репутацию</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-water"></i><span>/antiflood_on / antiflood_off</span></div><div class="cmd-desc">защита от флуда</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-font"></i><span>/antimat_on / antimat_off</span></div><div class="cmd-desc">фильтр мата</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-link"></i><span>/antilink_on / antilink_off</span></div><div class="cmd-desc">блокировка ссылок</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-moon"></i><span>/silence</span></div><div class="cmd-desc">режим тишины</div></div>
+                    <div class="cmd-entry" data-kw="бан забанить блокировка навсегда"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-ban"></i></span><span class="cmd-name">/ban @user [время] причина</span></div><div class="cmd-desc">заблокировать</div></div>
+                    <div class="cmd-entry" data-kw="разбанить снять бан разблокировка"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-unlock"></i></span><span class="cmd-name">/unban @user</span></div><div class="cmd-desc">разблокировать</div></div>
+                    <div class="cmd-entry" data-kw="снять варны очистить предупреждения"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-eraser"></i></span><span class="cmd-name">/clearwarns @user</span></div><div class="cmd-desc">очистить предупреждения</div></div>
+                    <div class="cmd-entry" data-kw="минус репутация понизить"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-thumbs-down"></i></span><span class="cmd-name">/unrep @user</span></div><div class="cmd-desc">снизить репутацию</div></div>
+                    <div class="cmd-entry" data-kw="флуд антиспам защита включить выключить"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-water"></i></span><span class="cmd-name">/antiflood_on / antiflood_off</span></div><div class="cmd-desc">защита от флуда</div></div>
+                    <div class="cmd-entry" data-kw="мат цензура фильтр слов"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-font"></i></span><span class="cmd-name">/antimat_on / antimat_off</span></div><div class="cmd-desc">фильтр мата</div></div>
+                    <div class="cmd-entry" data-kw="ссылки реклама блокировка"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-link"></i></span><span class="cmd-name">/antilink_on / antilink_off</span></div><div class="cmd-desc">блокировка ссылок</div></div>
+                    <div class="cmd-entry" data-kw="тишина режим ночь ограничение"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-moon"></i></span><span class="cmd-name">/silence</span></div><div class="cmd-desc">режим тишины</div></div>
                 </div>
             </div>
 
             <!-- Уровень 4+ -->
-            <div class="command-category" style="--order:7">
-                <div class="category-title"><i class="fas fa-bolt"></i> ⚡ Администратор (уровень 4+)</div>
+            <div class="command-category" style="--order:7" data-cat="lvl4" data-lvl="4" data-role="Администратор">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-bolt"></i></span>⚡ Администратор (уровень 4+)<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-user-shield"></i><span>/setadmin @user уровень (0-5)</span></div><div class="cmd-desc">назначить/снять администратора</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-snowflake"></i><span>/freeze @user</span></div><div class="cmd-desc">заморозить администратора</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-temperature-high"></i><span>/unfreeze @user</span></div><div class="cmd-desc">разморозить</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-edit"></i><span>/rules set текст</span></div><div class="cmd-desc">установить правила чата</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-trash"></i><span>/rules del</span></div><div class="cmd-desc">удалить правила</div></div>
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-shield-virus"></i><span>/antiraid</span></div><div class="cmd-desc">активировать антирейд</div></div>
+                    <div class="cmd-entry" data-kw="выдать права назначить админа роль"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-user-shield"></i></span><span class="cmd-name">/setadmin @user уровень (0-5)</span></div><div class="cmd-desc">назначить/снять администратора</div></div>
+                    <div class="cmd-entry" data-kw="заморозка ограничить админа"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-snowflake"></i></span><span class="cmd-name">/freeze @user</span></div><div class="cmd-desc">заморозить администратора</div></div>
+                    <div class="cmd-entry" data-kw="разморозка вернуть доступ"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-temperature-high"></i></span><span class="cmd-name">/unfreeze @user</span></div><div class="cmd-desc">разморозить</div></div>
+                    <div class="cmd-entry" data-kw="правила написать изменить установить"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-edit"></i></span><span class="cmd-name">/rules set текст</span></div><div class="cmd-desc">установить правила чата</div></div>
+                    <div class="cmd-entry" data-kw="правила удалить стереть"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-trash"></i></span><span class="cmd-name">/rules del</span></div><div class="cmd-desc">удалить правила</div></div>
+                    <div class="cmd-entry" data-kw="рейд защита тревога"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-shield-virus"></i></span><span class="cmd-name">/antiraid</span></div><div class="cmd-desc">активировать антирейд</div></div>
                 </div>
             </div>
 
             <!-- Уровень 5+ -->
-            <div class="command-category" style="--order:8">
-                <div class="category-title"><i class="fas fa-crown"></i> 👑 Руководитель (уровень 5+)</div>
+            <div class="command-category" style="--order:8" data-cat="lvl5" data-lvl="5" data-role="Руководитель">
+                <div class="category-title"><span class="cat-ico"><i class="fas fa-crown"></i></span>👑 Руководитель (уровень 5+)<span class="cat-count"></span></div>
                 <div class="commands-grid">
-                    <div class="cmd-entry"><div class="cmd-item"><i class="fas fa-bullhorn"></i><span>@all текст</span></div><div class="cmd-desc">упомянуть всех участников чата</div></div>
+                    <div class="cmd-entry" data-kw="упомянуть всех оповещение рассылка"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-bullhorn"></i></span><span class="cmd-name">@all текст</span></div><div class="cmd-desc">упомянуть всех участников чата</div></div>
+                    <div class="cmd-entry" data-kw="отключить команду запретить выключить disable uncommand"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-toggle-off"></i></span><span class="cmd-name">/uncommand команда</span></div><div class="cmd-desc">отключить команду в чате (доступно с 5 lvl)</div></div>
+                    <div class="cmd-entry" data-kw="включить команду разрешить вернуть enable encommand"><div class="cmd-head"><span class="cmd-ico"><i class="fas fa-toggle-on"></i></span><span class="cmd-name">/encommand команда</span></div><div class="cmd-desc">включить команду обратно (доступно с 5 lvl)</div></div>
                 </div>
+            </div>
+
+            <div class="no-results" id="no-results">
+                <i class="fas fa-ghost"></i>
+                Ничего не найдено. Попробуй другое слово — например <b>мут</b>, <b>бан</b> или <b>очки</b>.
+                <br><button class="btn-outline" id="reset-search" type="button" style="margin-top:16px;"><i class="fas fa-rotate-left"></i> Сбросить поиск</button>
             </div>
 
             <div style="background:rgba(10,15,28,0.8);border-radius:28px;padding:20px;margin-top:24px;">
                 <p><i class="fas fa-info-circle"></i> 💡 Ответь на сообщение и напиши команду, или используй /команда @username. Для @all просто напиши текст в чате!</p>
+                <p style="margin-top:12px;"><i class="fas fa-power-off"></i> 👑 Руководитель (5 lvl) может отключать и включать команды: <b>/uncommand команда</b> — выключить, <b>/encommand команда</b> — включить обратно.</p>
                 <p style="margin-top:12px;">✨ С теплом, твой бот-помощник ❤️</p>
             </div>
         </div>
@@ -599,10 +723,10 @@
         <div class="admin-card">
             <div style="width:90px;height:90px;background:linear-gradient(145deg,#1e2a5e,#2d3a6e);border-radius:100px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:3rem;"><i class="fab fa-telegram"></i></div>
             <h2 style="font-size:2rem;">👑 Главный тех. администратор</h2>
-            <p style="font-size:1.5rem;font-weight:600;margin:10px 0;">@unitydevs1</p>
+            <p style="font-size:1.5rem;font-weight:600;margin:10px 0;">@sotaop</p>
             <p style="max-width:600px;margin:0 auto 24px;">Создатель ChatCleanser, эксперт по безопасности и архитектор AI-модерации. Лично сопровождает интеграцию крупных сообществ и всегда на связи.</p>
             <div style="display:flex;gap:18px;justify-content:center;flex-wrap:wrap;">
-                <a href="https://t.me/unitydevs1" target="_blank" class="btn-primary"><i class="fab fa-telegram"></i> Написать админу</a>
+                <a href="https://t.me/sotaop" target="_blank" class="btn-primary"><i class="fab fa-telegram"></i> Написать админу</a>
                 <a href="https://t.me/ChatCleanser_bot" target="_blank" class="btn-outline"><i class="fas fa-headset"></i> Поддержка бота</a>
             </div>
             <div class="hash-badge" style="margin-top:28px;display:inline-block;"><i class="fas fa-hashtag"></i> администратор → #admin-team</div>
@@ -621,7 +745,7 @@
 </main>
 
 <footer class="footer container">
-    <p>© 2025 ChatCleanser — умная модерация и игры. Связь: @unitydevs1 24/7 ❤️</p>
+    <p>© 2025 ChatCleanser — умная модерация и игры. Связь: @sotaop 24/7 ❤️</p>
     <p style="margin-top:12px;"><i class="fas fa-magic"></i> Используй /help в чате или переходи по ссылкам: <strong>#commands</strong> — все команды | <strong>#moderation</strong> — инструменты модерации</p>
 </footer>
 
@@ -828,27 +952,204 @@
     );
 
     // ══════════════════════════════════════════
-    // COMMAND SEARCH
+    // COMMAND SEARCH + FILTERS
     // ══════════════════════════════════════════
-    const searchInput = document.getElementById('cmd-search');
-    const searchCount = document.getElementById('search-count');
-    const allEntries = document.querySelectorAll('.cmd-entry');
-    const allCategories = document.querySelectorAll('.command-category');
+    const searchInput  = document.getElementById('cmd-search');
+    const searchCount  = document.getElementById('search-count');
+    const searchClear  = document.getElementById('search-clear');
+    const noResults    = document.getElementById('no-results');
+    const resetBtn     = document.getElementById('reset-search');
+    const allEntries   = Array.from(document.querySelectorAll('.cmd-entry'));
+    const allCategories = Array.from(document.querySelectorAll('.command-category'));
+    const chips        = Array.from(document.querySelectorAll('.chip'));
 
-    searchInput.addEventListener('input', () => {
-        const q = searchInput.value.trim().toLowerCase();
-        let visible = 0;
-        allEntries.forEach(entry => {
-            const match = !q || entry.textContent.toLowerCase().includes(q);
-            entry.classList.toggle('hidden', !match);
-            if (match) visible++;
-        });
-        allCategories.forEach(cat => {
-            const has = [...cat.querySelectorAll('.cmd-entry')].some(e => !e.classList.contains('hidden'));
-            cat.classList.toggle('hidden', !has);
-        });
-        searchCount.textContent = q ? `${visible} команд` : '';
+    // Ключевые слова: команда → дополнительные слова для поиска
+    const KEYWORDS = {
+        'start':     'запуск приветствие начало',
+        'help':      'помощь команды справка список',
+        'profile':   'профиль карточка статистика игрока',
+        'balance':   'очки деньги баланс коины',
+        'daily':     'бонус ежедневный награда',
+        'transfer':  'перевод отправить очки другу',
+        'shop':      'магазин покупки торговля',
+        'inventory': 'инвентарь вещи предметы рюкзак',
+        'vip':       'премиум подписка привилегии',
+        'rules':     'правила регламент законы',
+        'staff':     'админы модераторы персонал',
+        'chatstats': 'статистика топ активность',
+        'report':    'жалоба репорт пожаловаться',
+        'calladmin': 'вызвать модератора помощь',
+        'mute':      'мут заглушить тишина timeout замутить флуд',
+        'unmute':    'снять мут размутить вернуть голос',
+        'kick':      'кик выгнать исключить',
+        'ban':       'бан забанить блокировка навсегда',
+        'unban':     'разбанить снять бан разблокировка',
+        'warn':      'варн предупреждение наказание',
+        'warns':     'варны предупреждения список',
+        'clearwarns': 'снять варны очистить нарушения',
+        'rep':       'репутация рейтинг плюс',
+        'unrep':     'минус репутация понизить',
+        'top':       'топ лидерборд рейтинг',
+        'game':      'игра угадай число мини-игра',
+        'casino':    'казино ставки азарт',
+        'clan':      'клан гильдия команда create join leave info top',
+        'silence':   'тишина режим ночь',
+        'antiflood': 'флуд защита антиспам',
+        'antimat':   'мат цензура фильтр слов',
+        'antilink':  'ссылки реклама блокировка',
+        'setadmin':  'выдать права назначить админа роль',
+        'freeze':    'заморозка ограничить админа',
+        'unfreeze':  'разморозка вернуть доступ',
+        'antiraid':  'рейд защита тревога',
+        'all':       'упомянуть всех оповещение рассылка',
+        'uncommand': 'отключить команду запретить выключить disable выкл',
+        'encommand': 'включить команду разрешить вернуть enable вкл'
+    };
+
+    const escHtml = s => String(s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+    const norm = s => String(s || '').toLowerCase().replace(/ё/g, 'е');
+
+    function plural(n, forms) {
+        const d = n % 10, h = n % 100;
+        if (d === 1 && h !== 11) return forms[0];
+        if (d >= 2 && d <= 4 && (h < 10 || h >= 20)) return forms[1];
+        return forms[2];
+    }
+    const cmdWord = n => plural(n, ['команда', 'команды', 'команд']);
+
+    // Подготовка: кэшируем текст, строим «haystack» для поиска, добавляем бейдж уровня
+    allEntries.forEach(entry => {
+        const nameEl = entry.querySelector('.cmd-name');
+        const descEl = entry.querySelector('.cmd-desc');
+        const cat = entry.closest('.command-category');
+        const head = entry.querySelector('.cmd-head');
+
+        entry._nameEl = nameEl;
+        entry._descEl = descEl;
+        entry._name = nameEl ? nameEl.textContent : '';
+        entry._desc = descEl ? descEl.textContent : '';
+        entry._hl = false;
+
+        const base = norm(entry._name.trim().split(/\s+/)[0] || '').replace(/^\//, '');
+        const catTitle = cat && cat.querySelector('.category-title') ? cat.querySelector('.category-title').textContent : '';
+        entry._hay = norm([
+            entry._name, entry._desc,
+            KEYWORDS[base] || '',
+            entry.dataset.kw || '',
+            catTitle
+        ].join(' '));
+
+        if (cat && cat.dataset.lvl && head) {
+            const badge = document.createElement('span');
+            badge.className = 'cmd-lvl l' + cat.dataset.lvl;
+            badge.textContent = cat.dataset.lvl + '+ lvl';
+            if (cat.dataset.role) badge.title = cat.dataset.role;
+            head.appendChild(badge);
+        }
     });
+
+    function highlight(text, tokens) {
+        if (!tokens.length) return escHtml(text);
+        const lower = norm(text);
+        const ranges = [];
+        tokens.forEach(t => {
+            if (!t) return;
+            let i = lower.indexOf(t);
+            while (i !== -1) { ranges.push([i, i + t.length]); i = lower.indexOf(t, i + t.length); }
+        });
+        if (!ranges.length) return escHtml(text);
+        ranges.sort((a, b) => a[0] - b[0]);
+        const merged = [];
+        ranges.forEach(r => {
+            const last = merged[merged.length - 1];
+            if (last && r[0] <= last[1]) last[1] = Math.max(last[1], r[1]);
+            else merged.push([r[0], r[1]]);
+        });
+        let out = '', pos = 0;
+        merged.forEach(([s, e]) => {
+            out += escHtml(text.slice(pos, s)) + '<mark class="hl">' + escHtml(text.slice(s, e)) + '</mark>';
+            pos = e;
+        });
+        return out + escHtml(text.slice(pos));
+    }
+
+    let activeCat = 'all';
+
+    function applyFilter() {
+        const q = searchInput.value.trim();
+        const tokens = norm(q).split(/\s+/).filter(Boolean);
+        let visible = 0;
+
+        allEntries.forEach(entry => {
+            const okQ = tokens.every(t => entry._hay.includes(t));
+            const cat = entry.closest('.command-category');
+            const okC = activeCat === 'all' || (cat && cat.dataset.cat === activeCat);
+            const show = okQ && okC;
+
+            entry.classList.toggle('hidden', !show);
+
+            if (show) {
+                visible++;
+                if (tokens.length) {
+                    if (entry._nameEl) entry._nameEl.innerHTML = highlight(entry._name, tokens);
+                    if (entry._descEl) entry._descEl.innerHTML = highlight(entry._desc, tokens);
+                    entry._hl = true;
+                } else if (entry._hl) {
+                    if (entry._nameEl) entry._nameEl.innerHTML = escHtml(entry._name);
+                    if (entry._descEl) entry._descEl.innerHTML = escHtml(entry._desc);
+                    entry._hl = false;
+                }
+            }
+        });
+
+        allCategories.forEach(cat => {
+            const shown = Array.from(cat.querySelectorAll('.cmd-entry')).filter(e => !e.classList.contains('hidden')).length;
+            cat.classList.toggle('hidden', shown === 0);
+            const c = cat.querySelector('.cat-count');
+            if (c) c.textContent = shown + ' ' + cmdWord(shown);
+        });
+
+        const filtering = tokens.length > 0 || activeCat !== 'all';
+        searchCount.textContent = filtering ? visible + ' ' + cmdWord(visible) : '';
+        searchClear.classList.toggle('show', q.length > 0);
+        noResults.classList.toggle('show', visible === 0);
+    }
+
+    function setCat(cat) {
+        activeCat = cat || 'all';
+        chips.forEach(x => x.classList.toggle('active', x.dataset.cat === activeCat));
+        applyFilter();
+    }
+
+    function resetAll() {
+        searchInput.value = '';
+        setCat('all');
+        searchInput.focus();
+    }
+
+    searchInput.addEventListener('input', applyFilter);
+    searchInput.addEventListener('keydown', e => {
+        if (e.key === 'Escape') { searchInput.value = ''; applyFilter(); }
+    });
+    searchClear.addEventListener('click', () => { searchInput.value = ''; applyFilter(); searchInput.focus(); });
+    if (resetBtn) resetBtn.addEventListener('click', resetAll);
+    chips.forEach(ch => ch.addEventListener('click', () => setCat(ch.dataset.cat)));
+
+    document.addEventListener('keydown', e => {
+        const el = document.activeElement;
+        const typing = el && /^(INPUT|TEXTAREA)$/.test(el.tagName);
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+            e.preventDefault();
+            document.getElementById('commands').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            searchInput.focus(); searchInput.select();
+        } else if (e.key === '/' && !typing) {
+            e.preventDefault();
+            document.getElementById('commands').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            searchInput.focus();
+        }
+    });
+
+    applyFilter();
 </script>
 </body>
 </html>
